@@ -1,0 +1,28 @@
+version: "2.3"
+services:
+
+  gazebo:
+    image: arm_gazebo
+    container_name: armgazebo
+    tty: true
+    ipc: host
+    network_mode: "host"
+    privileged: true
+    security_opt:
+      - seccomp:unconfined
+    environment:
+      - PULSE_SERVER=unix:${XDG_RUNTIME_DIR}/pulse/native
+      - DISPLAY=$DISPLAY
+      - QT_X11_NO_MITSHM=1
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - $HOME/.Xauthority:/home/robot/.Xauthority
+      - ${XDG_RUNTIME_DIR}/pulse/native:${XDG_RUNTIME_DIR}/pulse/native
+      - ${ARM_GAZEBO_DIR}:/home/robot/catkin_ws/src/arm_gazebo
+    working_dir: /home/robot/catkin_ws
+    entrypoint:
+    - bash
+    - -ci 
+    - "cd /home/robot/catkin_ws/src/arm_gazebo/bin && ./init_sim.bash"
+
+
